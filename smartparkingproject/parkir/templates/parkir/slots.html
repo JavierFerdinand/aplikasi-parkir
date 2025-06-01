@@ -1,0 +1,10 @@
+<h2>Slot Tersedia untuk {{ jenis|title }}</h2>
+<form method="post">
+  {% csrf_token %}
+  <select name="slot_id">
+    {% for slot in slots %}
+      <option value="{{ slot.id }}">{{ slot.nomor_slot }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Ambil Slot</button>
+</form>
