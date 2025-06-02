@@ -4,86 +4,238 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daftar Slot Parkir</title>
+  <title>Parking Slot Management | Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --success-color: #2ecc71;
+      --danger-color: #e74c3c;
+      --warning-color: #f39c12;
+      --light-bg: #f8f9fa;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .container {
+      max-width: 1200px;
+    }
+    
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: none;
+      margin-bottom: 20px;
+    }
+    
+    .card-header {
+      background-color: var(--secondary-color);
+      color: white;
+      font-weight: 600;
+      border-radius: 10px 10px 0 0 !important;
+      padding: 15px 20px;
+    }
+    
+    .table {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table thead th {
+      background-color: var(--secondary-color);
+      color: white;
+      border-bottom: none;
+      padding: 15px;
+    }
+    
+    .table tbody tr {
+      transition: all 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+      background-color: rgba(52, 152, 219, 0.05);
+    }
+    
+    .badge {
+      padding: 6px 10px;
+      font-weight: 500;
+      border-radius: 8px;
+    }
+    
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 0.85rem;
+    }
+    
+    .alert {
+      border-radius: 8px;
+    }
+    
+    .page-title {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--primary-color);
+      display: inline-block;
+    }
+    
+    .status-badge {
+      min-width: 90px;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    .action-buttons {
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body>
-  <div class="container mt-4">
-    <h1>Daftar Slot Parkir</h1>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="page-title">
+        <i class="bi bi-p-square-fill me-2"></i>Manajemen Slot Parkir
+      </h1>
+      <div>
+        <a href="http://localhost:8000/admin/parkir/slotparkir/add/" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> Add Slot
+        </a>
+      </div>
+    </div>
 
-    <!-- Pesan sukses atau error -->
+    <!-- Alert Messages -->
     {% if messages %}
       {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          <i class="bi bi-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}-fill me-2"></i>
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       {% endfor %}
     {% endif %}
 
-    <!-- Form Checkout dengan kode unik -->
-    <div class="card mb-4">
-      <div class="card-header">Checkout dengan Kode Unik</div>
+    <!-- Quick Checkout Card -->
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-qr-code-scan me-2"></i>Quick Checkout
+      </div>
       <div class="card-body">
         <form method="post" action="{% url 'admintes:checkout_slot_by_kode' %}">
           {% csrf_token %}
-          <div class="input-group">
-            <input type="text" name="kode_unik" class="form-control" placeholder="Masukkan kode unik" required />
-            <button class="btn btn-primary" type="submit">Checkout</button>
+          <div class="row g-2">
+            <div class="col-md-10">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                <input type="text" name="kode_unik" class="form-control form-control-lg" placeholder="Enter unique parking code" required />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-lg w-100" type="submit">
+                <i class="bi bi-check2-circle me-1"></i> Checkout
+              </button>
+            </div>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Tabel daftar slot -->
-    <table class="table table-bordered table-hover">
-      <thead class="table-light">
-        <tr>
-          <th>Nomor Slot</th>
-          <th>Jenis Kendaraan</th>
-          <th>Status</th>
-          <th>Kode Unik</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for slot in slots %}
-        <tr>
-          <td>{{ slot.nomor_slot }}</td>
-          <td>{{ slot.jenis_kendaraan|title }}</td>
-          <td>
-            {% if slot.tersedia %}
-              <span class="badge bg-success">Tersedia</span>
-            {% else %}
-              <span class="badge bg-danger">Terpakai</span>
-            {% endif %}
-          </td>
-          <td>{{ slot.kode_unik }}</td>
-          <td>
-            {% if not slot.tersedia %}
-              <!-- Form Checkout berdasarkan slot_id -->
-              <form method="post" action="{% url 'admintes:checkout_slot_by_id' slot.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button class="btn btn-warning btn-sm" type="submit">Checkout</button>
-              </form>
-            {% endif %}
-
-            <!-- Form hapus slot -->
-            <form method="post" action="{% url 'admintes:hapus_slot' slot.id %}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus slot ini?');">
-              {% csrf_token %}
-              <button class="btn btn-danger btn-sm" type="submit">Hapus</button>
-            </form>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5" class="text-center">Tidak ada slot parkir.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <!-- Parking Slots Table -->
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-list-ul me-2"></i>All Parking Slots
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Slot </th>
+                <th>Jenis Kendaraan</th>
+                <th>Status</th>
+                <th>Kode Unik</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for slot in slots %}
+              <tr>
+                <td class="fw-bold">{{ slot.nomor_slot }}</td>
+                <td>
+                  <span class="badge bg-info text-dark">
+                    <i class="bi bi-{% if slot.jenis_kendaraan == 'mobil' %}car-front{% else %}bicycle{% endif %} me-1"></i>
+                    {{ slot.jenis_kendaraan|title }}
+                  </span>
+                </td>
+                <td>
+                  {% if slot.tersedia %}
+                    <span class="badge bg-success status-badge">
+                      <i class="bi bi-check-circle me-1"></i> Tersedia
+                    </span>
+                  {% else %}
+                    <span class="badge bg-danger status-badge">
+                      <i class="bi bi-x-circle me-1"></i> Tidak Tersedia
+                    </span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if slot.kode_unik %}
+                    <span class="badge bg-light text-dark">
+                      <i class="bi bi-upc me-1"></i> {{ slot.kode_unik }}
+                    </span>
+                  {% else %}
+                    <span class="text-muted">N/A</span>
+                  {% endif %}
+                </td>
+                <td class="action-buttons text-end">
+                  {% if not slot.tersedia %}
+                    <form method="post" action="{% url 'admintes:checkout_slot_by_id' slot.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button class="btn btn-warning btn-sm" type="submit" data-bs-toggle="tooltip" title="Checkout">
+                        <i class="bi bi-receipt"></i>
+                      </button>
+                    </form>
+                  {% endif %}
+                  <form method="post" action="{% url 'admintes:hapus_slot' slot.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this parking slot?');">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm" type="submit" data-bs-toggle="tooltip" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <i class="bi bi-p-circle display-6 text-muted mb-3"></i>
+                  <h5 class="text-muted">No parking slots available</h5>
+                  <p class="text-muted">Add new slots to get started</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Enable Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    })
+  </script>
 </body>
 </html>

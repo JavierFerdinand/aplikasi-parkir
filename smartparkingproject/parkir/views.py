@@ -2,11 +2,15 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import SlotParkir, TiketParkir, LogTransaksi
 from django.utils.timezone import now
+from django.http import HttpResponse
+from .models import SlotParkir
+from barcode.writer import ImageWriter
 import re
 import io
 import base64
 import barcode
-from barcode.writer import ImageWriter
+
+import csv
 
 def index(request):
     slot_parkir = SlotParkir.objects.all()
@@ -41,17 +45,29 @@ def natural_key(slot):
         return (slot.nomor_slot, 0)
 
 def motor_view(request):
+    # Get all motorcycle slots ordered by natural key
     slots = list(SlotParkir.objects.filter(jenis_kendaraan='motor').order_by('nomor_slot'))
     slots.sort(key=natural_key)
+    
+    # Split into left and right sides
     half = len(slots) // 2
     slots_left = slots[:half]
     slots_right = slots[half:]
+    
+    # Group into rows (5 slots per row - adjust this number as needed)
+    def chunk(lst, n):
+        """Split list into chunks of size n"""
+        return [lst[i:i + n] for i in range(0, len(lst), n)]
+    
+    # Organize into rows for the template
+    slots_left_rows = chunk(slots_left, 6)  # 5 slots per row on left side
+    slots_right_rows = chunk(slots_right, 6)  # 5 slots per row on right side
+    
     context = {
-        'slots_left': slots_left,
-        'slots_right': slots_right,
+        'slots_left': slots_left_rows,  # Now a list of lists (rows)
+        'slots_right': slots_right_rows,  # Now a list of lists (rows)
     }
     return render(request, 'parkir/motor.html', context)
-
 
 def pilih_slot_motor(request, slot_id):
     slot = get_object_or_404(SlotParkir, id=slot_id, jenis_kendaraan='motor')
@@ -119,4 +135,22 @@ def slots(request, jenis):
 
         return redirect('struk', tiket_id=tiket.id)
     return render(request, 'parkir/slots.html', {'slots': slot_tersedia, 'jenis': jenis})
-# Create your views here.
+
+def generate_laporan(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="laporan_slot_parkir.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Nomor Slot', 'Jenis Kendaraan', 'Status', 'Waktu Masuk', 'Waktu Keluar'])
+
+    slots = SlotParkir.objects.all()
+    for slot in slots:
+        writer.writerow([
+            slot.nomor_slot,
+            slot.jenis_kendaraan,
+            slot.status,
+            slot.waktu_masuk,
+            slot.waktu_keluar
+        ])
+
+    return response
