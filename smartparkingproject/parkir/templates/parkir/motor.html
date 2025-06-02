@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Denah Parkir Motor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f2f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin: 30px 0 20px;
+            color: #0d6efd;
+        }
+        .parking-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .side {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            justify-items: center;
+        }
+        .slot-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+            transition: transform 0.2s ease;
+        }
+        .slot-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .tersedia {
+            background-color: #28a745;
+        }
+        .tidak-tersedia {
+            background-color: #dc3545;
+            cursor: not-allowed;
+            opacity: 0.75;
+        }
+        .lane {
+            width: 100px;
+            min-height: 300px;
+            background: linear-gradient(180deg, #6c757d 0%, #adb5bd 100%);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .lane::before, .lane::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 12px solid transparent;
+        }
+        .lane::before {
+            top: 10px;
+            border-bottom-color: #0d6efd;
+        }
+        .lane::after {
+            bottom: 10px;
+            border-top-color: #0d6efd;
+        }
+        .lane-label {
+            position: absolute;
+            bottom: -28px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #0d6efd;
+            text-align: center;
+        }
+        .legend {
+            max-width: 400px;
+            margin: 30px auto;
+            display: flex;
+            justify-content: space-around;
+            font-weight: 600;
+            color: #444;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .color-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+        }
+        .tersedia-box {
+            background-color: #28a745;
+            box-shadow: 0 0 8px #28a745;
+        }
+        .tidak-tersedia-box {
+            background-color: #dc3545;
+            box-shadow: 0 0 8px #dc3545;
+        }
+        a.kembali {
+            display: block;
+            max-width: 200px;
+            margin: 0 auto 40px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: #0d6efd;
+            border: 2px solid #0d6efd;
+            padding: 10px 0;
+            border-radius: 8px;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        a.kembali:hover {
+            background-color: #0d6efd;
+            color: white;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .parking-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .lane {
+                width: 60px;
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Denah Parkir Motor</h1>
+
+    <div class="parking-container">
+        <!-- Sisi Kiri -->
+        <div class="side">
+            {% for slot in slots_left %}
+            <form method="post" action="{% url 'pilih_slot_motor' slot.id %}">
+                {% csrf_token %}
+                <button type="submit" class="slot-btn {% if slot.tersedia %}tersedia{% else %}tidak-tersedia{% endif %}" {% if not slot.tersedia %}disabled{% endif %}>
+                    {{ slot.nomor_slot }}
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+
+        <!-- Lorong Tengah -->
+        <div class="lane">
+            <div class="lane-label">Arah Masuk / Keluar</div>
+        </div>
+
+        <!-- Sisi Kanan -->
+        <div class="side">
+            {% for slot in slots_right %}
+            <form method="post" action="{% url 'pilih_slot_motor' slot.id %}">
+                {% csrf_token %}
+                <button type="submit" class="slot-btn {% if slot.tersedia %}tersedia{% else %}tidak-tersedia{% endif %}" {% if not slot.tersedia %}disabled{% endif %}>
+                    {{ slot.nomor_slot }}
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <span class="color-box tersedia-box"></span> Tersedia
+        </div>
+        <div class="legend-item">
+            <span class="color-box tidak-tersedia-box"></span> Terisi
+        </div>
+    </div>
+
+    <a href="/" class="kembali">Kembali ke Beranda</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

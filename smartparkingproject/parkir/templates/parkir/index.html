@@ -1,3 +1,11 @@
-<h1>Pilih Jenis Parkir</h1>
-<a href="{% url 'slots' 'motor' %}">Parkir Motor</a>
-<a href="{% url 'slots' 'mobil' %}">Parkir Mobil</a>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Parking - Pilih Jenis Kendaraan</title>
+</head>
+<body>
+    <h2>Silakan Pilih Jenis Parkir</h2>
+    <a href="{% url 'motor' %}"><button>Parkir Motor</button></a>
+    <a href="{% url 'mobil' %}"><button>Parkir Mobil</button></a>
+</body>
+</html>

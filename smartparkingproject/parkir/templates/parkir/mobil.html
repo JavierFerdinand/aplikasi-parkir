@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Denah Slot Parkir Motor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .slot-btn {
+            width: 100%;
+            padding: 1.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            transition: transform 0.15s ease-in-out;
+            user-select: none;
+        }
+        .slot-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .tersedia {
+            background-color: #198754; /* bootstrap green */
+            color: white;
+            border: none;
+        }
+        .tidak-tersedia {
+            background-color: #dc3545; /* bootstrap red */
+            color: white;
+            border: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .keterangan-box {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .legend-item {
+            font-weight: 600;
+            color: #444;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+    <h1 class="text-center mb-4 text-primary">Denah Slot Parkir Mobil</h1>
+
+    <div class="row row-cols-2 row-cols-md-5 g-3 justify-content-center">
+        {% for slot in slots %}
+        <div class="col">
+            <form method="post" action="{% url 'pilih_slot_mobil' slot.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                    class="slot-btn {% if slot.tersedia %}tersedia{% else %}tidak-tersedia{% endif %}"
+                    {% if not slot.tersedia %}disabled{% endif %}
+                    title="Slot {{ slot.nomor_slot }} - {% if slot.tersedia %}Tersedia{% else %}Terisi{% endif %}">
+                    {{ slot.nomor_slot }}
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-center gap-4 mt-5">
+        <div class="legend-item">
+            <span class="keterangan-box" style="background-color:#198754;"></span> Tersedia
+        </div>
+        <div class="legend-item">
+            <span class="keterangan-box" style="background-color:#dc3545;"></span> Terisi
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-outline-primary">Kembali ke Beranda</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

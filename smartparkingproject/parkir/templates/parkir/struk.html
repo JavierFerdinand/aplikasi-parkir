@@ -1,5 +1,53 @@
-<h2>Struk Parkir</h2>
-<p>Kode Unik: {{ tiket.kode_unik }}</p>
-<p>Slot: {{ tiket.slot.nomor_slot }}</p>
-<p>Masuk: {{ tiket.waktu_masuk }}</p>
-<button onclick="window.print()">Print</button>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <title>Struk Parkir Motor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 20px;
+            border: 2px solid #0d6efd;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        h2 {
+            color: #0d6efd;
+            margin-bottom: 20px;
+        }
+        .info {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+    window.onload = function() {
+        window.print();
+    };
+
+    window.onafterprint = function() {
+        // Redirect setelah dialog print ditutup
+        window.location.href = "{% url 'index' %}";
+    };
+</script>
+</head>
+<body>
+    <h2>Struk Parkir Motor</h2>
+    <div class="info">Slot: <strong>{{ slot.nomor_slot }}</strong></div>
+    <div class="info">Waktu: <strong>{{ waktu_pilih|date:"d-m-Y H:i:s" }}</strong></div>
+
+    <button onclick="window.print()">Cetak Lagi</button>
+</body>
+</html>
