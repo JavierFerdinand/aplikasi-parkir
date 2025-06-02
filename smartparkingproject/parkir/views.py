@@ -1,9 +1,12 @@
 
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import SlotParkir, TiketParkir
+from .models import SlotParkir, TiketParkir, LogTransaksi
 from django.utils.timezone import now
 import re
-
+import io
+import base64
+import barcode
+from barcode.writer import ImageWriter
 
 def index(request):
     slot_parkir = SlotParkir.objects.all()
@@ -20,9 +23,6 @@ def slots(request, jenis):
         return redirect('struk', tiket_id=tiket.id)
     return render(request, 'parkir/slots.html', {'slots': slot_tersedia, 'jenis': jenis})
 
-def struk(request, tiket_id):
-    tiket = get_object_or_404(TiketParkir, id=tiket_id)
-    return render(request, 'parkir/struk.html', {'tiket': tiket})
 
 def home(request):
     slot_parkir = SlotParkir.objects.all()
@@ -53,29 +53,20 @@ def motor_view(request):
     return render(request, 'parkir/motor.html', context)
 
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils.timezone import now
-from .models import SlotParkir
-
 def pilih_slot_motor(request, slot_id):
     slot = get_object_or_404(SlotParkir, id=slot_id, jenis_kendaraan='motor')
 
     if request.method == 'POST':
         if slot.tersedia:
             slot.tersedia = False
-            slot.save()  # simpan perubahan ke DB
+            slot.save()
 
-            waktu_pilih = now()
-            context = {
-                'slot': slot,
-                'waktu_pilih': waktu_pilih,
-            }
-            return render(request, 'parkir/struk.html', context)
+            tiket = TiketParkir.objects.create(slot=slot)
+            return redirect('struk', tiket_id=tiket.id)
         else:
-            # Slot sudah tidak tersedia, bisa redirect ke denah dengan pesan (optional)
-            return redirect('motor')  # ganti dengan nama url denah motor
+            return redirect('motor')
     else:
-        return redirect('motor')  # ganti dengan nama url denah motor
+        return redirect('motor')
 
 
 def mobil_view(request):
@@ -94,4 +85,38 @@ def checkout(request, pk):
     data.sudah_checkout = True
     data.save()
     return redirect('kendaraan_masuk')
+
+def struk(request, tiket_id):
+    tiket = get_object_or_404(TiketParkir, id=tiket_id)
+    kode_unik = tiket.slot.kode_unik  # ambil kode unik dari slot
+
+    # Generate barcode Code39
+    CODE39 = barcode.get_barcode_class('code39')
+
+    buffer = io.BytesIO()
+    barcode_obj = CODE39(kode_unik, writer=ImageWriter(), add_checksum=False)
+    barcode_obj.write(buffer)
+
+    barcode_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+    return render(request, 'parkir/struk.html', {
+        'tiket': tiket,
+        'waktu_pilih': tiket.waktu_masuk,
+        'barcode_base64': barcode_base64,  # kirim ke template
+    })
+
+def slots(request, jenis):
+    slot_tersedia = SlotParkir.objects.filter(jenis_kendaraan=jenis, tersedia=True)
+    if request.method == "POST":
+        slot_id = request.POST.get("slot_id")
+        slot = SlotParkir.objects.get(id=slot_id)
+        slot.tersedia = False
+        slot.save()
+        
+        tiket = TiketParkir.objects.create(slot=slot)
+        
+        LogTransaksi.objects.create(tiket=tiket, aksi="Slot dipesan")
+
+        return redirect('struk', tiket_id=tiket.id)
+    return render(request, 'parkir/slots.html', {'slots': slot_tersedia, 'jenis': jenis})
 # Create your views here.

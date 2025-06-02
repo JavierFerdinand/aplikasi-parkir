@@ -1,11 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Parking - Pilih Jenis Kendaraan</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .parking-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .parking-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 2rem;
+        }
+
+        .parking-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .motor-card {
+            background: linear-gradient(45deg, #1abc9c, #16a085);
+        }
+
+        .mobil-card {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-parking {
+            border: none;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-parking:hover {
+            background-color: white;
+            color: #2c3e50;
+            transform: scale(1.05);
+        }
+
+        .parking-footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+        }
+    </style>
 </head>
+
 <body>
-    <h2>Silakan Pilih Jenis Parkir</h2>
-    <a href="{% url 'motor' %}"><button>Parkir Motor</button></a>
-    <a href="{% url 'mobil' %}"><button>Parkir Mobil</button></a>
+    <!-- Header Section -->
+    <header class="parking-header text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Smart Parking System</h1>
+            <p class="lead">Pilih jenis kendaraan Anda untuk memulai pengalaman parkir yang cerdas</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center mb-5">
+                <h2 class="fw-bold mb-3">Silakan Pilih Jenis Parkir</h2>
+                <p class="text-muted">Pilih sesuai dengan kendaraan yang Anda gunakan untuk pengalaman parkir yang
+                    optimal</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <!-- Motor Card -->
+            <div class="col-md-5">
+                <div class="parking-card motor-card text-white text-center p-5">
+                    <i class="fas fa-motorcycle card-icon"></i>
+                    <h3 class="fw-bold mb-4">Parkir Motor</h3>
+                    <p class="mb-4">Tempat parkir khusus untuk kendaraan roda dua dengan tarif terjangkau</p>
+                    <a href="{% url 'motor' %}" class="btn btn-parking">
+                        Pilih Motor <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-1 d-flex align-items-center justify-content-center my-3 my-md-0">
+                <div class="vr d-none d-md-block" style="height: 100px;"></div>
+                <span class="d-md-none fw-bold">ATAU</span>
+            </div>
+
+            <!-- Mobil Card -->
+            <div class="col-md-5">
+                <div class="parking-card mobil-card text-white text-center p-5">
+                    <i class="fas fa-car card-icon"></i>
+                    <h3 class="fw-bold mb-4">Parkir Mobil</h3>
+                    <p class="mb-4">Area parkir luas untuk kendaraan roda empat dengan keamanan terjamin</p>
+                    <a href="{% url 'mobil' %}" class="btn btn-parking">
+                        Pilih Mobil <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="parking-footer text-center"
+        style="background-color: #2c3e50; color: white; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p class="mb-1 fw-bold">&copy; Parking System - All rights reserved.</p>
+            <p class="mb-1">Kelompok 2 - Sistem Parkir Cerdas</p>
+            <p class="mb-0">
+                Anggota:<br>
+                1. Javier Ferdinand Bernadine (24111814041)<br>
+                2. Della Ayu Nurlaili (24111814035)<br>
+                3. Rendy Agus Dwi Satrio (24111814094)<br>
+                4. Muhammad Nur Thohir (24111814074)<br>
+                5. Azzrofa Fathun Adha (24111814002)
+            </p>
+        </div>
+    </footer>
+
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
