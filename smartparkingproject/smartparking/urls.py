@@ -21,5 +21,6 @@ from parkir import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('parkir.urls')),
+    path('admintes/', include('admintes.urls')),
     
 ]
