@@ -12,4 +12,5 @@ urlpatterns = [
     path('pilih-slot-mobil/<int:slot_id>/', views.pilih_slot_mobil, name='pilih_slot_mobil'),
     
     
+    
 ]

@@ -96,6 +96,18 @@
     .action-buttons {
       white-space: nowrap;
     }
+    
+    /* Added for logout button */
+    .logout-btn {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      margin-left: 10px;
+    }
+    .logout-btn:hover {
+      background-color: #c0392b;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -107,6 +119,10 @@
       <div>
         <a href="http://localhost:8000/admin/parkir/slotparkir/add/" class="btn btn-primary">
           <i class="bi bi-plus-circle"></i> Add Slot
+        </a>
+        <!-- Added logout button -->
+        <a href="http://localhost:8000/admin/logout/" class="btn logout-btn">
+          <i class="bi bi-box-arrow-right"></i> Logout
         </a>
       </div>
     </div>

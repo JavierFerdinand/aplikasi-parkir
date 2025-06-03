@@ -4,6 +4,7 @@ from django.contrib import messages
 from parkir.models import SlotParkir
 from parkir.views import *
 
+
 @staff_member_required
 def daftar_slot(request):
     slots = SlotParkir.objects.all().order_by('nomor_slot')

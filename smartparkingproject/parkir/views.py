@@ -2,15 +2,11 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import SlotParkir, TiketParkir, LogTransaksi
 from django.utils.timezone import now
-from django.http import HttpResponse
-from .models import SlotParkir
-from barcode.writer import ImageWriter
 import re
 import io
 import base64
 import barcode
-
-import csv
+from barcode.writer import ImageWriter
 
 def index(request):
     slot_parkir = SlotParkir.objects.all()
@@ -135,22 +131,4 @@ def slots(request, jenis):
 
         return redirect('struk', tiket_id=tiket.id)
     return render(request, 'parkir/slots.html', {'slots': slot_tersedia, 'jenis': jenis})
-
-def generate_laporan(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="laporan_slot_parkir.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Nomor Slot', 'Jenis Kendaraan', 'Status', 'Waktu Masuk', 'Waktu Keluar'])
-
-    slots = SlotParkir.objects.all()
-    for slot in slots:
-        writer.writerow([
-            slot.nomor_slot,
-            slot.jenis_kendaraan,
-            slot.status,
-            slot.waktu_masuk,
-            slot.waktu_keluar
-        ])
-
-    return response
+# Create your views here.
