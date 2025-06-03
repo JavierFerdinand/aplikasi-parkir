@@ -10,7 +10,7 @@ class SlotParkir(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.kode_unik:
-            self.kode_unik = uuid.uuid4().hex[:8].upper()  # atau custom generator
+            self.kode_unik = uuid.uuid4().hex[:8].upper()  
         super().save(*args, **kwargs)
         
     def __str__(self):
@@ -27,8 +27,7 @@ class TiketParkir(models.Model):
 class LogTransaksi(models.Model):
     tiket = models.ForeignKey(TiketParkir, on_delete=models.CASCADE)
     waktu_log = models.DateTimeField(auto_now_add=True)
-    aksi = models.CharField(max_length=100)  # Contoh: "Slot dipesan", "Cetak struk"
+    aksi = models.CharField(max_length=100)  #gajadi dipake
 
     def __str__(self):
         return f"{self.waktu_log} - {self.aksi} - {self.tiket.kode_unik}"
-# Create your models here.
